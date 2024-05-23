@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 app.get('/', async (req, res) => {
     //res.send("hello World");//serves index.html
-    const pageTitle = "Dynamic webpage";
+    const pageTitle = "Kamys course DB";
     const sql = 'SHOW tables';
     const dbData = await db.query(sql);
     console.log(dbData);
@@ -53,7 +53,7 @@ app.get('/exempel', async (req, res) => {
     buildQuery(cols);
 
     //
-    const pageTitle = "Dynamic webpage";
+    const pageTitle = "Kamys course DB";
     const sql = 'SHOW tables';
     const dbData = await db.query(sql);
     console.log(dbData);
@@ -66,7 +66,7 @@ app.post('/', async (req, res) => {
     //getting input data from the form
     console.log(req.body);
     const tableName = req.body;
-    const pageTitle = "Dynamic webpage";
+    const pageTitle = "Kamys course DB";
     const sql = `SELECT * FROM ${tableName.table_name}`;
     currentTable = tableName.table_name
     const dbData = await db.query(sql);
@@ -78,7 +78,7 @@ app.post('/', async (req, res) => {
 
 app.get('/removeData', async (req, res) => {
     //res.send("hello World");//serves index.html
-    const pageTitle = "Dynamic webpage";
+    const pageTitle = "Kamys course DB";
     const sql = `SELECT * FROM ${currentTable}`;
     const dbData = await db.query(sql);
     console.log(dbData);
@@ -89,7 +89,7 @@ app.post('/removeData', async (req, res) => {
     //getting input data from the form
     console.log(req.body);
     const requestData = req.body;
-    const pageTitle = "Dynamic webpage";
+    const pageTitle = "Kamys course DB";
     //execute delete query on a table.row
     const sqlDeleteQuery = `DELETE FROM ${currentTable} WHERE id=${requestData.id}`;
     const deleteQuery = await db.query(sqlDeleteQuery);
@@ -117,12 +117,6 @@ app.get('/students', async (req, res) => {
     }
     const dbData = await db.query(sql);
     console.log(dbData);
-    res.json(dbData);
-});
-
-app.get('/plants/:id/:col', async (req, res) => {
-    let sql = `SELECT ${req.params.col} FROM plants WHERE id = ${req.params.id}`;
-    const dbData = await db.query(sql);
     res.json(dbData);
 });
 
