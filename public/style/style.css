@@ -1,8 +1,9 @@
 body {
-    background-color: blue;
+    background-color: rgb(194, 194, 222);
 }
 
 li a{
     display: block;
     width: 60px;
     }
+

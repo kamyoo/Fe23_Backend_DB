@@ -14,7 +14,7 @@ import bodyParser from "body-parser";
 const app = express();
 
 //set public folder for static web pages
-app.use(express.static('public'));
+app.use("/public", express.static('public'));
 
 //set dynamic web pages, set views and engine
 app.set('view engine', 'ejs');
@@ -31,39 +31,49 @@ app.get('/', async (req, res) => {
     const pageTitle = "Kamys course DB";
     const sql = 'SHOW tables';
     const dbData = await db.query(sql);
+    const students = await db.getAllStudents();
+    const courses = await db.getAllCourses();
     console.log(dbData);
-    res.render('index', {pageTitle, dbData} );
+    res.render('index', { pageTitle, dbData, students, courses: courses });
 });
-app.get('/exempel', async (req, res) => {
-    //res.send("hello World");//serves index.html
-    //
-    let cols = ["first","second","one","4","c"]
-    let buildQuery = (cols) => {
-        let colQuery = "";
-        for (let i = 0; i < cols.length; i++) {
-            if(i<cols.length-1){    
-                colQuery+=cols[i]+",";
-            }else{
-                colQuery+=cols[i]
-            }     
-        }
-        let queryStart = "INSERT INTO(" + colQuery + ") WHERE fdsaf";
-        console.log(queryStart);
-    }
-    buildQuery(cols);
 
-    //
-    const pageTitle = "Kamys course DB";
-    const sql = 'SHOW tables';
-    const dbData = await db.query(sql);
-    console.log(dbData);
-    res.render('index', {pageTitle, dbData} );
+app.get('/getStudents', async (req, res) => {
+    try {
+        const pageTitle = "Kamys course DB";
+        const students = await db.getAllStudents();
+        const courses = await db.getAllCourses();
+        const dbData = [];
+        res.render('getStudents', { pageTitle, dbData, students, courses });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/getCourses', async (req, res) => {
+    try {
+        const pageTitle = "Kamys course DB";
+        const courses = await db.getAllCourses();
+        const students = await db.getAllStudents(); // Fetch students data as well
+        const dbData = [];
+        console.log(courses); // Log the courses data
+        res.render('getCourses', { pageTitle, dbData, students, courses }); // Pass students data along with courses
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/getStudents_courses', async (req, res) => {
+    // Fetch data from the students_courses table
+    const sql = `SELECT * FROM students_courses`;
+    const studentsCourses = await db.query(sql);
+    res.json(studentsCourses);
 });
 
 let currentTable;
 app.post('/', async (req, res) => {
-    //res.send("hello World");//serves index.html
-    //getting input data from the form
+
     console.log(req.body);
     const tableName = req.body;
     const pageTitle = "Kamys course DB";
@@ -77,7 +87,7 @@ app.post('/', async (req, res) => {
 
 
 app.get('/removeData', async (req, res) => {
-    //res.send("hello World");//serves index.html
+    
     const pageTitle = "Kamys course DB";
     const sql = `SELECT * FROM ${currentTable}`;
     const dbData = await db.query(sql);
@@ -85,8 +95,7 @@ app.get('/removeData', async (req, res) => {
     res.render('removeData', {pageTitle, dbData} );
 });
 app.post('/removeData', async (req, res) => {
-    //res.send("hello World");//serves index.html
-    //getting input data from the form
+
     console.log(req.body);
     const requestData = req.body;
     const pageTitle = "Kamys course DB";
@@ -105,22 +114,31 @@ app.post('/removeData', async (req, res) => {
     res.render('removeData', {pageTitle, dbData, dbDataHeaders} );
 });
 
-//return Json table data
-app.get('/students', async (req, res) => {
-    let sql = "";
-    const {id} = req.query;
-    console.log(id);
-    if(id){
-        sql = `SELECT * FROM students WHERE id = ${id}`;
-    }else{
-        sql = `SELECT * FROM students`;
+app.get('/dropdownPage', async (req, res) => {
+    try {
+        const students = await db.getAllStudents();
+        const courses = await db.getAllCourses();
+        res.render('dropdownPage', { students, courses });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-    const dbData = await db.query(sql);
-    console.log(dbData);
-    res.json(dbData);
 });
 
-
+app.post('/getStudents', async (req, res) => {
+    const { course_id } = req.body;
+    console.log(req.body);
+    const sql = `
+        SELECT students.*
+        FROM students
+        INNER JOIN students_courses ON students.id = students_courses.students_id
+        WHERE students_courses.courses_id = ?
+    `;
+    
+    const dbData = await db.query(sql, [course_id]);
+    console.log(dbData);
+    res.render('getStudents', { students: dbData });
+});
 
 //server configuration
 const port = 3000;

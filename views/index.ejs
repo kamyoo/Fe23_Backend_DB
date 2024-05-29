@@ -4,11 +4,30 @@
 
     <%- include('partials/header') %>
     
-    <form action="/" method="POST">
+    <!-- <form action="/" method="POST">
         table name: <input type="text" name="table_name" >
         <button type="submit">Get Table</button>
+    </form> -->
+
+    <form action="/" method="POST">
+        <button type="submit" name="table_name" value="students">Show Students Table</button>
+        <button type="submit" name="table_name" value="courses">Show Courses Table</button>
+        <button type="submit" name="table_name" value="students_courses">Show Students_Courses Table</button>
     </form>
 
+    <form action="/getStudents" method="post">
+        <select name="course_id">
+            <% if (courses && courses.length) { %>
+                <% courses.forEach(course => { %>
+                    <option value="<%= course.id %>"><%= course.name %></option>
+                <% }); %>
+            <% } else { %>
+                <option>No courses available</option>
+            <% } %>
+        </select>
+        <button type="submit">Get Students</button>
+    </form>
+    
     <p> <%= pageTitle; %></p>
 
 

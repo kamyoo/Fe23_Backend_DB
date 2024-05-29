@@ -27,3 +27,29 @@ export function
       });
     }
   
+    // Function to get all students
+export function getAllStudents() {
+  return new Promise((resolve, reject) => {
+      pool.query('SELECT * FROM students', (error, results) => {
+          if (error) {
+              reject(error);
+          } else {
+            
+              resolve(results);
+          }
+      });
+  });
+}
+
+// Function to get all courses
+export function getAllCourses() {
+  return new Promise((resolve, reject) => {
+      pool.query('SELECT * FROM courses', (error, results) => {
+          if (error) {
+              reject(error);
+          } else {
+              resolve(results);
+          }
+      });
+  });
+}

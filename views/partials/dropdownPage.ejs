@@ -1,0 +1,10 @@
+<form action="/getStudents" method="post">
+    <select name="course_id">
+        <% if (courses && courses.length) { %>
+            <% courses.forEach(course => { %>
+                <option value="<%= course.id %>"><%= course.name %></option>
+            <% }); %>
+        <% } %>
+    </select>
+    <button type="submit">Get Students</button>
+</form>

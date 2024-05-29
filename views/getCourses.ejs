@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+
+<body>
+
+    <%- include('partials/header') %>
+    
+    <h2>List of all courses.</h2>
+    
+    <ul>
+        <% if (courses && courses.length) { %>
+            <% courses.forEach(courses => { %>
+                <li><%= courses.name %> - <%= courses.description %></li>
+            <% }); %>
+        <% } else { %>
+            <li>No courses available.</li>
+        <% } %>
+    </ul>
+
+    <footer>
+        <%- include('partials/footer'); %>
+    </footer>
+
+</body>
+</html>
